@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+    <head>
+    <style>
+
+
+        body{
+            color: rgb(2, 19, 0);
+            background-color: rgb(2, 71, 8);
+        }
+        .botao
+        {
+            color: rgb(20, 20, 20);
+            background-color: rgb(253, 251, 251);
+            font-size: 20px;
+            height: 40px;
+            width: 40px;
+            border-radius: 20%;
+            border-color: rgb(1, 61, 16);
+        }
+
+        .botao:hover
+        {
+            background-color: black;
+            color: white;
+
+        }
+
+        .fundo
+        {
+            background-image: linear-gradient(45deg,black, rgb(3, 114, 9));
+            height: 100vh;
+            color: #fff;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+        }
+
+        .calculadora
+        {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            border-radius: 25px;
+            padding: 15px;
+        }
+
+        #display
+        {
+            height: 100px;
+            width: 180px;
+            border-color: rgb(1, 34, 6);
+            border-width: 10px ;
+            font-size: 50px;
+            font-style: oblique;
+            position: relative;
+            text-align: center;
+        }
+
+    </style>
+<body>
+    <div class="fundo">
+        <div class="calculadora"> 
+            <table>    
+            <center><h1></h1>
+            <input type="text" id="display" readonly>
+            <br>
+            <button class="botao" onclick="limpar()">C</button>
+            <button class="botao" onclick="potencia('**')">¹</button>
+            <button class="botao" onclick="adicionarOperacao('%')">%</button>
+            <button class="botao" onclick="back()"><</button>
+            <br>
+            <button class="botao" onclick="adicionarNumero('7')">7</button>
+            <button class="botao" onclick="adicionarNumero('8')">8</button>
+            <button class="botao" onclick="adicionarNumero('9')">9</button>
+            <button class="botao" onclick="adicionarOperacao('+')">+</button>
+            <br>
+            <button class="botao" onclick="adicionarNumero('4')">4</button>
+            <button class="botao" onclick="adicionarNumero('5')">5</button>
+            <button class="botao" onclick="adicionarNumero('6')">6</button>
+            <button class="botao" onclick="adicionarOperacao('-')">-</button>
+            <br>
+            <button class="botao" onclick="adicionarNumero('1')">1</button>
+            <button class="botao" onclick="adicionarNumero('2')">2</button>
+            <button class="botao" onclick="adicionarNumero('3')">3</button>
+            <button class="botao" onclick="adicionarOperacao('*')">*</button>
+            <br>
+            <button class="botao" onclick="adicionarNumero('0')">0</button>
+            <button class="botao" onclick="ponto()">.</button>
+            <button class="botao" onclick="calcular()">=</button>
+            <button class="botao" onclick="adicionarOperacao('/')">/</button></center>
+            </table>
+        </div>
+    </div>
+</head>
+    <script>
+        // Atributos ou variáveis
+        let operador1 = '';
+        let operador2 = '';
+        let operacao = '';
+        let resultado = '';
+
+        // Função de adicionar 
+        function adicionarNumero(numero)
+        {
+            if (operacao === '')
+            {
+                operador1 += numero;
+            } else {
+                operador2 += numero;
+            }
+            atualizarDisplay();        
+        }
+
+        function back()
+        {   if(operador2 === '')
+            {
+            operador1 = operador1.substring (0, operador1.length -1);
+            atualizarDisplay();
+            } else if (operador2 !== '')
+                {
+                    operador2 = operador2.substring (0, operador2.length -1);
+                    atualizarDisplay();
+                }
+        };
+
+        function porcentagem()
+        { 
+            operacao = '%'
+            if(operador1 !== '' && operacao === '%')
+            {                
+                operador1 = operador1 / 100;    
+            }
+            atualizarDisplay();
+        };
+
+        function potencia ()
+        {   
+            operacao = '¹'
+            if(operador1 !== '' && operacao === '¹')
+            {                
+                operador1 = operador1 * operador1;    
+            }
+            atualizarDisplay();
+
+        };
+
+        document.addEventListener('keydown', function(event) {
+            const tecla = event.key;
+            if (tecla >= '0' && tecla <= '9') {
+                adicionarNumero(tecla);
+            } else if (tecla === '+' || tecla === '-' || tecla === '*' || tecla === '/') {
+                adicionarOperacao(tecla);
+            } else if (tecla === '.') {
+                adicionarDecimal(tecla);
+            } else if (tecla === 'Enter') {
+                calcular();
+            } else if (tecla === 'Backspace') {
+                back();
+            }
+        });
+
+        // Função de adicionar operação
+        function adicionarOperacao(op)
+        {
+            if(operador1 !== '' && operador2 === '')
+            {
+                operacao = op;
+                atualizarDisplay();
+            }
+            
+            if(operador2 !== '' && operacao !== '')
+            {
+                calcular();
+                operacao = op;
+            }
+            
+        }
+        // Função de atualizar display
+        function atualizarDisplay()
+        {   
+            if(operador2 === '')
+            {
+                document.getElementById('display').value = operador1; 
+            } else if (operador2 !== '')
+            {
+                document.getElementById('display').value = operador2
+            }
+
+        }
+
+        //Função de limpar o display        
+        function limpar()
+        {    
+            resultado = '';
+            operador1 = '';
+            operador2 = '';
+            operacao = '';
+            atualizarDisplay();
+        }
+
+        // Função de calcular
+        function calcular()
+        {
+            if(operador1 !== '' && operador2 !== '')
+            {
+            switch(operacao){
+                case '+':
+                    resultado = parseFloat(operador1) + parseFloat(operador2)
+                    break;
+                case '-':
+                    resultado = parseFloat(operador1) - parseFloat(operador2)
+                    break;
+                case '*':
+                    resultado = parseFloat(operador1) * parseFloat(operador2)
+                    break;
+                case '/': 
+                    resultado = parseFloat(operador1) / parseFloat(operador2)
+                    break;
+                case '%':
+                    resultado = operador1 / 100;
+                    break;
+            }    
+            }
+            operador1 = resultado.toString()
+            operador2 = '';
+            resultado = '';
+            atualizarDisplay();            
+        }
+
+    </script>
+</body>
+</html>
